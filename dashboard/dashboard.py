@@ -398,12 +398,13 @@ with seg_cols[1]:
     cell = st.container(border=True)
     cell.markdown("##### :material/bar_chart: Category Stats")
     
+    cat_order_stats = ['Low (<2k)', 'Medium (2k-4k)', 'High (4k-6k)', 'Very High (>6k)']
     cat_stats = filtered_df_cat.groupby('category').agg({
         'cnt': ['count', 'mean'],
         'temp_actual': 'mean'
     }).round(1)
     cat_stats.columns = ['Days', 'Avg', 'Temp']
-    cat_stats = cat_stats.reindex(cat_order)
+    cat_stats = cat_stats.reindex(cat_order_stats)
     
     cell.dataframe(cat_stats, use_container_width=True)
 
