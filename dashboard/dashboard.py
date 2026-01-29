@@ -14,7 +14,276 @@ st.set_page_config(
 # Get the directory where dashboard.py is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load data
+# ==================== THEME TOGGLE ====================
+# Initialize theme in session state
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'dark'
+
+# Theme configurations - exact colors from demo-stockpeers for dark mode
+THEMES = {
+    'dark': {
+        'background': '#0f172b',
+        'secondary_bg': '#1d293d',
+        'text': '#e2e8f0',
+        'text_secondary': '#94a3b8',
+        'primary': '#615fff',
+        'border': '#314158',
+        'card_bg': '#1d293d',
+        'success': '#10b981',
+        'warning': '#f59e0b',
+        'danger': '#ef4444',
+        'chart_colors': ['#615fff', '#ff6b6b', '#10b981', '#f59e0b', '#3b82f6'],
+    },
+    'light': {
+        'background': '#ffffff',
+        'secondary_bg': '#f8fafc',
+        'text': '#1e293b',
+        'text_secondary': '#64748b',
+        'primary': '#615fff',
+        'border': '#e2e8f0',
+        'card_bg': '#ffffff',
+        'success': '#10b981',
+        'warning': '#f59e0b',
+        'danger': '#ef4444',
+        'chart_colors': ['#615fff', '#ff6b6b', '#10b981', '#f59e0b', '#3b82f6'],
+    }
+}
+
+theme = THEMES[st.session_state.theme]
+
+# ==================== CUSTOM CSS ====================
+st.markdown(f"""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    
+    /* Global */
+    html, body, [class*="css"] {{
+        font-family: 'Space Grotesk', sans-serif;
+    }}
+    
+    .stApp {{
+        background-color: {theme['background']};
+    }}
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] {{
+        background-color: {theme['secondary_bg']};
+        border-right: 1px solid {theme['border']};
+    }}
+    
+    /* Headers */
+    h1, h2, h3, h4, h5, h6 {{
+        color: {theme['text']} !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+    }}
+    
+    p, span, label {{
+        color: {theme['text']};
+    }}
+    
+    /* Metric cards */
+    [data-testid="stMetricValue"] {{
+        color: {theme['text']} !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+    }}
+    
+    [data-testid="stMetricLabel"] {{
+        color: {theme['text_secondary']} !important;
+    }}
+    
+    [data-testid="stMetricDelta"] {{
+        color: {theme['text_secondary']} !important;
+    }}
+    
+    /* Container borders */
+    [data-testid="stVerticalBlock"] > div:has(> [data-testid="stVerticalBlockBorderWrapper"]) {{
+        background-color: {theme['card_bg']};
+        border: 1px solid {theme['border']};
+        border-radius: 12px;
+    }}
+    
+    /* Animated counter styles */
+    .counter-container {{
+        background: {theme['card_bg']};
+        border: 1px solid {theme['border']};
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+    }}
+    
+    .counter-label {{
+        color: {theme['text_secondary']};
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }}
+    
+    .counter-value {{
+        color: {theme['text']};
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-family: 'Space Grotesk', monospace;
+        line-height: 1.2;
+    }}
+    
+    .counter-delta {{
+        color: {theme['primary']};
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }}
+    
+    /* Theme toggle button */
+    .theme-toggle {{
+        position: fixed;
+        top: 0.75rem;
+        right: 1rem;
+        z-index: 1000;
+        background: {theme['card_bg']};
+        border: 1px solid {theme['border']};
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: {theme['text']};
+        transition: all 0.3s ease;
+    }}
+    
+    .theme-toggle:hover {{
+        border-color: {theme['primary']};
+    }}
+    
+    /* Section headers */
+    .section-header {{
+        color: {theme['text']};
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }}
+    
+    /* Insight cards */
+    .insight-card {{
+        background: {theme['secondary_bg']};
+        border: 1px solid {theme['border']};
+        border-radius: 10px;
+        padding: 1rem;
+    }}
+    
+    .insight-card h5 {{
+        color: {theme['text']};
+        margin: 0 0 0.75rem 0;
+        font-size: 0.95rem;
+    }}
+    
+    .insight-card p {{
+        color: {theme['text_secondary']};
+        font-size: 0.9rem;
+        margin: 0.25rem 0;
+    }}
+    
+    /* Footer */
+    .footer {{
+        color: {theme['text_secondary']};
+        font-size: 0.8rem;
+        text-align: center;
+        padding: 2rem 0;
+        border-top: 1px solid {theme['border']};
+        margin-top: 2rem;
+    }}
+    
+    /* Hide default streamlit elements */
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    
+    /* Pills/Tabs styling */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 8px;
+        background-color: transparent;
+    }}
+    
+    .stTabs [data-baseweb="tab"] {{
+        background-color: {theme['secondary_bg']};
+        border: 1px solid {theme['border']};
+        border-radius: 8px;
+        color: {theme['text']};
+    }}
+    
+    .stTabs [aria-selected="true"] {{
+        background-color: {theme['primary']};
+        border-color: {theme['primary']};
+    }}
+    
+    /* Dataframe */
+    .stDataFrame {{
+        border: 1px solid {theme['border']};
+        border-radius: 8px;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# ==================== ANIMATED COUNTER COMPONENT ====================
+def animated_counter(label, value, delta=None, prefix="", suffix="", icon=""):
+    """Create an animated counter with counting effect"""
+    
+    # Format value for display
+    if isinstance(value, float):
+        formatted_value = f"{value:,.1f}"
+    else:
+        formatted_value = f"{value:,}"
+    
+    # Create unique ID for this counter
+    counter_id = f"counter_{label.replace(' ', '_').lower()}"
+    
+    html = f"""
+    <div class="counter-container">
+        <div class="counter-label">{icon} {label}</div>
+        <div class="counter-value" id="{counter_id}">{prefix}0{suffix}</div>
+        {f'<div class="counter-delta">{delta}</div>' if delta else ''}
+    </div>
+    
+    <script>
+        (function() {{
+            const counterElement = document.getElementById('{counter_id}');
+            const targetValue = {value};
+            const duration = 2000; // 2 seconds
+            const frameDuration = 1000 / 60; // 60fps
+            const totalFrames = Math.round(duration / frameDuration);
+            
+            let frame = 0;
+            const countTo = targetValue;
+            
+            // Easing function for smooth animation
+            const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+            
+            const counter = setInterval(() => {{
+                frame++;
+                const progress = easeOutQuart(frame / totalFrames);
+                const currentCount = Math.round(countTo * progress);
+                
+                // Format number with commas
+                const formatted = currentCount.toLocaleString('en-US');
+                counterElement.textContent = '{prefix}' + formatted + '{suffix}';
+                
+                if (frame === totalFrames) {{
+                    clearInterval(counter);
+                    counterElement.textContent = '{prefix}{formatted_value}{suffix}';
+                }}
+            }}, frameDuration);
+        }})();
+    </script>
+    """
+    
+    return html
+
+# ==================== LOAD DATA ====================
 @st.cache_data
 def load_data():
     day_df = pd.read_csv(os.path.join(CURRENT_DIR, "main_data.csv"))
@@ -27,12 +296,24 @@ def load_data():
 
 day_df, hour_df = load_data()
 
-# Header
-"""
-# :material/directions_bike: Bike Sharing Analytics
+# ==================== HEADER WITH THEME TOGGLE ====================
+header_cols = st.columns([6, 1])
 
-Analisis pola penyewaan sepeda berdasarkan kondisi cuaca dan waktu.
-"""
+with header_cols[0]:
+    st.markdown("""
+    # :material/directions_bike: Bike Sharing Analytics
+    
+    Analisis pola penyewaan sepeda berdasarkan kondisi cuaca dan waktu.
+    """)
+
+with header_cols[1]:
+    # Theme toggle button
+    theme_icon = "🌙" if st.session_state.theme == 'light' else "☀️"
+    theme_label = "Dark" if st.session_state.theme == 'light' else "Light"
+    
+    if st.button(f"{theme_icon} {theme_label}", key="theme_toggle", use_container_width=True):
+        st.session_state.theme = 'light' if st.session_state.theme == 'dark' else 'dark'
+        st.rerun()
 
 ""  # Spacer
 
@@ -63,23 +344,15 @@ with filter_cell:
     
     ""  # Spacer
     
-    # Season filter with pills
+    # Season filter
     season_options = ['All', 'Spring', 'Summer', 'Fall', 'Winter']
-    selected_season = st.pills(
-        "Season",
-        options=season_options,
-        default='All',
-    )
+    selected_season = st.pills("Season", options=season_options, default='All')
     
     ""  # Spacer
     
-    # Weather filter with pills
+    # Weather filter
     weather_options = ['All'] + list(day_df['weather_name'].unique())
-    selected_weather = st.pills(
-        "Weather",
-        options=weather_options,
-        default='All',
-    )
+    selected_weather = st.pills("Weather", options=weather_options, default='All')
 
 # ==================== FILTER DATA ====================
 filtered_df = day_df[(day_df['dteday'] >= pd.Timestamp(start_date)) & 
@@ -109,7 +382,6 @@ if filtered_df.empty:
 chart_cell = cols[1].container(border=True)
 
 with chart_cell:
-    # Daily trend chart
     chart_data = filtered_df[['dteday', 'casual', 'registered', 'cnt']].copy()
     chart_data = chart_data.melt(
         id_vars=['dteday'], 
@@ -119,84 +391,98 @@ with chart_cell:
     )
     
     chart = alt.Chart(chart_data).mark_area(
-        opacity=0.6,
+        opacity=0.7,
         interpolate='monotone'
     ).encode(
         alt.X('dteday:T', title='Date'),
         alt.Y('Rentals:Q', title='Daily Rentals', stack=True),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=[theme['primary'], theme['danger']]
         )),
         alt.Tooltip(['dteday:T', 'User Type:N', 'Rentals:Q'])
-    ).properties(height=350)
+    ).properties(height=350).configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_legend(
+        labelColor=theme['text'],
+        titleColor=theme['text']
+    )
     
     st.altair_chart(chart, use_container_width=True)
 
-# ==================== METRICS ====================
+# ==================== ANIMATED METRICS ====================
 ""  # Spacer
+
+total_rentals = int(filtered_df['cnt'].sum())
+avg_rentals = int(filtered_df['cnt'].mean())
+total_casual = int(filtered_df['casual'].sum())
+total_registered = int(filtered_df['registered'].sum())
+pct_casual = (total_casual / total_rentals * 100) if total_rentals > 0 else 0
+pct_registered = (total_registered / total_rentals * 100) if total_rentals > 0 else 0
 
 metric_cols = st.columns(4)
 
-total_rentals = filtered_df['cnt'].sum()
-avg_rentals = filtered_df['cnt'].mean()
-total_casual = filtered_df['casual'].sum()
-total_registered = filtered_df['registered'].sum()
-
 with metric_cols[0]:
-    cell = st.container(border=True)
-    cell.metric(
-        ":material/pedal_bike: Total Rentals",
-        f"{total_rentals:,}",
-        f"{len(filtered_df)} days"
+    st.markdown(
+        animated_counter(
+            label="Total Rentals",
+            value=total_rentals,
+            delta=f"{len(filtered_df)} days",
+            icon="🚲"
+        ),
+        unsafe_allow_html=True
     )
 
 with metric_cols[1]:
-    cell = st.container(border=True)
-    cell.metric(
-        ":material/analytics: Daily Average",
-        f"{avg_rentals:,.0f}",
-        "per day"
+    st.markdown(
+        animated_counter(
+            label="Daily Average",
+            value=avg_rentals,
+            delta="per day",
+            icon="📊"
+        ),
+        unsafe_allow_html=True
     )
 
 with metric_cols[2]:
-    pct_casual = (total_casual / total_rentals * 100) if total_rentals > 0 else 0
-    cell = st.container(border=True)
-    cell.metric(
-        ":material/person: Casual Users",
-        f"{total_casual:,}",
-        f"{pct_casual:.1f}%"
+    st.markdown(
+        animated_counter(
+            label="Casual Users",
+            value=total_casual,
+            delta=f"{pct_casual:.1f}%",
+            icon="👤"
+        ),
+        unsafe_allow_html=True
     )
 
 with metric_cols[3]:
-    pct_registered = (total_registered / total_rentals * 100) if total_rentals > 0 else 0
-    cell = st.container(border=True)
-    cell.metric(
-        ":material/verified: Registered Users",
-        f"{total_registered:,}",
-        f"{pct_registered:.1f}%"
+    st.markdown(
+        animated_counter(
+            label="Registered Users",
+            value=total_registered,
+            delta=f"{pct_registered:.1f}%",
+            icon="✓"
+        ),
+        unsafe_allow_html=True
     )
 
 ""
 ""
 
-# ==================== ANALYSIS SECTION 1: WEATHER ====================
-"""
-## :material/cloud: Weather Impact Analysis
-
-How weather conditions affect bike rentals.
-"""
+# ==================== WEATHER ANALYSIS ====================
+st.markdown("## :material/cloud: Weather Impact Analysis")
 
 weather_cols = st.columns(3)
 
-# Season chart
 with weather_cols[0]:
     cell = st.container(border=True)
     
     season_data = filtered_df.groupby('season_name')['cnt'].mean().reset_index()
     season_data.columns = ['Season', 'Average Rentals']
-    
-    # Reorder seasons
     season_order = ['Spring', 'Summer', 'Fall', 'Winter']
     season_data['Season'] = pd.Categorical(season_data['Season'], categories=season_order, ordered=True)
     season_data = season_data.sort_values('Season')
@@ -209,14 +495,21 @@ with weather_cols[0]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('Season:N', scale=alt.Scale(
             domain=season_order,
-            range=['#10b981', '#f59e0b', '#ef4444', '#3b82f6']
+            range=[theme['success'], theme['warning'], theme['danger'], theme['primary']]
         ), legend=None),
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
-    ).properties(height=280, title='Rentals by Season')
+    ).properties(height=280, title='Rentals by Season').configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_title(
+        color=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
-# Weather chart
 with weather_cols[1]:
     cell = st.container(border=True)
     
@@ -232,11 +525,18 @@ with weather_cols[1]:
         alt.X('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('Average Rentals:Q', scale=alt.Scale(scheme='blues'), legend=None),
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
-    ).properties(height=280, title='Rentals by Weather')
+    ).properties(height=280, title='Rentals by Weather').configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_title(
+        color=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
-# Temperature correlation
 with weather_cols[2]:
     cell = st.container(border=True)
     
@@ -252,28 +552,31 @@ with weather_cols[2]:
         alt.Tooltip(['temp_actual:Q', 'cnt:Q'])
     )
     
-    # Trend line
-    trend = scatter.transform_regression(
-        'temp_actual', 'cnt'
-    ).mark_line(color='#ef4444', strokeDash=[4, 4])
+    trend = scatter.transform_regression('temp_actual', 'cnt').mark_line(
+        color=theme['danger'], 
+        strokeDash=[4, 4]
+    )
     
-    chart = (scatter + trend).properties(height=280, title='Temperature vs Rentals')
+    chart = (scatter + trend).properties(height=280, title='Temperature vs Rentals').configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_title(
+        color=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
 ""
 ""
 
-# ==================== ANALYSIS SECTION 2: TIME ====================
-"""
-## :material/schedule: Time Pattern Analysis
-
-Rental patterns across different time dimensions.
-"""
+# ==================== TIME ANALYSIS ====================
+st.markdown("## :material/schedule: Time Pattern Analysis")
 
 time_cols = st.columns(2)
 
-# Hourly pattern
 with time_cols[0]:
     cell = st.container(border=True)
     
@@ -287,25 +590,34 @@ with time_cols[0]:
     
     chart = alt.Chart(hourly_data).mark_line(
         point=True,
-        strokeWidth=2
+        strokeWidth=2.5
     ).encode(
         alt.X('hr:O', title='Hour'),
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=[theme['primary'], theme['danger']]
         )),
         alt.Tooltip(['hr:O', 'User Type:N', 'Average Rentals:Q'])
-    ).properties(height=300, title='Hourly Rental Pattern')
+    ).properties(height=300, title='Hourly Rental Pattern').configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_title(
+        color=theme['text']
+    ).configure_legend(
+        labelColor=theme['text'],
+        titleColor=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
-# Daily pattern
 with time_cols[1]:
     cell = st.container(border=True)
     
     day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    day_short = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     
     daily_data = filtered_df.groupby('weekday_name')[['casual', 'registered']].mean().reset_index()
     daily_data['weekday_name'] = pd.Categorical(daily_data['weekday_name'], categories=day_order, ordered=True)
@@ -318,80 +630,81 @@ with time_cols[1]:
     )
     
     chart = alt.Chart(daily_data).mark_bar().encode(
-        alt.X('weekday_name:N', sort=day_order, title=None, axis=alt.Axis(labelAngle=0)),
+        alt.X('weekday_name:N', sort=day_order, title=None),
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=[theme['primary'], theme['danger']]
         )),
         alt.XOffset('User Type:N'),
         alt.Tooltip(['weekday_name:N', 'User Type:N', 'Average Rentals:Q'])
-    ).properties(height=300, title='Daily Rental Pattern')
+    ).properties(height=300, title='Daily Rental Pattern').configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=theme['text_secondary'],
+        titleColor=theme['text'],
+        gridColor=theme['border']
+    ).configure_title(
+        color=theme['text']
+    ).configure_legend(
+        labelColor=theme['text'],
+        titleColor=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
 ""
 ""
 
-# ==================== PEAK HOURS & INSIGHTS ====================
-"""
-## :material/insights: Key Insights
-"""
+# ==================== INSIGHTS ====================
+st.markdown("## :material/insights: Key Insights")
 
-insight_cols = st.columns([1, 1, 1])
+insight_cols = st.columns(3)
 
-# Peak hours
 with insight_cols[0]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/schedule: Peak Hours")
+    cell.markdown("##### 🕐 Peak Hours")
     
     hourly_avg = filtered_hour_df.groupby('hr')['cnt'].mean()
     top_hours = hourly_avg.nlargest(3)
     
     for hour, val in top_hours.items():
-        cell.markdown(f"**{hour:02d}:00** — {val:,.0f} avg rentals")
+        cell.markdown(f"**{hour:02d}:00** — {val:,.0f} avg")
 
-# Best conditions
 with insight_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/wb_sunny: Best Conditions")
+    cell.markdown("##### ☀️ Best Conditions")
     
     best_season = filtered_df.groupby('season_name')['cnt'].mean().idxmax()
     best_weather = filtered_df.groupby('weather_name')['cnt'].mean().idxmax()
-    
-    cell.markdown(f"**Best Season:** {best_season}")
-    cell.markdown(f"**Best Weather:** {best_weather}")
-    
-    # Correlation
     temp_corr = filtered_df['temp_actual'].corr(filtered_df['cnt'])
-    cell.markdown(f"**Temp Correlation:** {temp_corr:.2f}")
+    
+    cell.markdown(f"**Season:** {best_season}")
+    cell.markdown(f"**Weather:** {best_weather}")
+    cell.markdown(f"**Temp Corr:** {temp_corr:.2f}")
 
-# User behavior
 with insight_cols[2]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/group: User Behavior")
+    cell.markdown("##### 👥 User Behavior")
     
     weekend_casual = filtered_df[filtered_df['workingday'] == 0]['casual'].mean()
     weekday_casual = filtered_df[filtered_df['workingday'] == 1]['casual'].mean()
-    casual_increase = ((weekend_casual - weekday_casual) / weekday_casual) * 100
+    if weekday_casual > 0:
+        casual_increase = ((weekend_casual - weekday_casual) / weekday_casual) * 100
+        cell.markdown(f"**Weekend ↑:** +{casual_increase:.0f}%")
     
-    cell.markdown(f"**Weekend Casual Increase:** +{casual_increase:.0f}%")
-    cell.markdown(f"**Registered Dominance:** {pct_registered:.0f}%")
-    cell.markdown(f"**Casual Share:** {pct_casual:.0f}%")
+    cell.markdown(f"**Registered:** {pct_registered:.0f}%")
+    cell.markdown(f"**Casual:** {pct_casual:.0f}%")
 
 ""
 ""
 
-# ==================== RENTAL CATEGORY DISTRIBUTION ====================
-"""
-## :material/donut_large: Rental Volume Segmentation
+# ==================== SEGMENTATION ====================
+st.markdown("## :material/donut_large: Volume Segmentation")
 
-Categorizing days based on rental volume.
-"""
+seg_cols = st.columns([2, 1])
 
-segment_cols = st.columns([2, 1])
-
-with segment_cols[0]:
+with seg_cols[0]:
     cell = st.container(border=True)
     
     def categorize(cnt):
@@ -410,75 +723,71 @@ with segment_cols[0]:
     cat_counts['Category'] = pd.Categorical(cat_counts['Category'], categories=cat_order, ordered=True)
     cat_counts = cat_counts.sort_values('Category')
     
-    chart = alt.Chart(cat_counts).mark_arc(innerRadius=60).encode(
+    chart = alt.Chart(cat_counts).mark_arc(innerRadius=70).encode(
         alt.Theta('Days:Q'),
         alt.Color('Category:N', scale=alt.Scale(
             domain=cat_order,
-            range=['#ef4444', '#f59e0b', '#10b981', '#615fff']
+            range=[theme['danger'], theme['warning'], theme['success'], theme['primary']]
         ), sort=cat_order),
         alt.Tooltip(['Category:N', 'Days:Q'])
-    ).properties(height=300, title='Distribution of Days by Rental Volume')
+    ).properties(height=300, title='Days by Rental Volume').configure_view(
+        strokeWidth=0
+    ).configure_title(
+        color=theme['text']
+    ).configure_legend(
+        labelColor=theme['text'],
+        titleColor=theme['text']
+    )
     
     cell.altair_chart(chart, use_container_width=True)
 
-with segment_cols[1]:
+with seg_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/info: Category Stats")
+    cell.markdown("##### 📊 Category Stats")
     
     cat_stats = filtered_df_cat.groupby('category').agg({
         'cnt': ['count', 'mean'],
         'temp_actual': 'mean'
     }).round(1)
-    cat_stats.columns = ['Days', 'Avg Rentals', 'Avg Temp']
+    cat_stats.columns = ['Days', 'Avg', 'Temp']
     cat_stats = cat_stats.reindex(cat_order)
     
     cell.dataframe(cat_stats, use_container_width=True)
-    
-    cell.markdown("""
-    **Insight:** Days with very high rentals tend to have warmer temperatures 
-    and lower humidity levels.
-    """)
 
 ""
 ""
 
 # ==================== CONCLUSIONS ====================
-"""
-## :material/summarize: Conclusions
-"""
+st.markdown("## :material/summarize: Conclusions")
 
 conc_cols = st.columns(2)
 
 with conc_cols[0]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/cloud: Weather Impact")
+    cell.markdown("##### 🌤️ Weather Impact")
     cell.markdown("""
-    1. **Fall season** has the highest average rentals
-    2. **Clear weather** increases rentals by ~2x vs rainy days
-    3. **Temperature** has strong positive correlation (r≈0.63)
-    4. **High humidity** reduces rental activity
+    1. **Fall** has highest average rentals
+    2. **Clear weather** increases rentals ~2x
+    3. **Temperature** correlation: r≈0.63
+    4. **High humidity** reduces activity
     """)
 
 with conc_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### :material/schedule: Time Patterns")
+    cell.markdown("##### ⏰ Time Patterns")
     cell.markdown("""
-    1. **Peak hours:** 8:00 AM and 5:00-6:00 PM (commuter pattern)
-    2. **Registered users** show bimodal commuter pattern
-    3. **Casual users** increase significantly on weekends
-    4. **Year-over-year growth** from 2011 to 2012
+    1. **Peak:** 8 AM & 5-6 PM (commuters)
+    2. **Registered** = bimodal pattern
+    3. **Casual** ↑ significantly on weekends
+    4. **YoY growth** from 2011 to 2012
     """)
 
-""
-""
-
 # ==================== FOOTER ====================
-st.divider()
+st.markdown("---")
 
-footer_cols = st.columns([2, 1])
-
-with footer_cols[0]:
-    st.caption("Data Source: Capital Bikeshare System, Washington D.C. (2011-2012)")
-
-with footer_cols[1]:
-    st.caption("Created by **Muhammad Himbar Buana** • Dicoding Indonesia")
+st.markdown(f"""
+<div class="footer">
+    <p>Data: Capital Bikeshare System, Washington D.C. (2011-2012)</p>
+    <p>Created by <strong>Muhammad Himbar Buana</strong> • Dicoding Indonesia</p>
+</div>
+""", unsafe_allow_html=True)
