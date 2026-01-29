@@ -377,18 +377,17 @@ with seg_cols[0]:
     
     cat_counts = filtered_df_cat['category'].value_counts().reset_index()
     cat_counts.columns = ['Category', 'Days']
-    cat_counts = cat_counts.sort_values('Days', ascending=False).reset_index(drop=True)
     
-    # Highlight: first is blue, rest is gray (like Dicoding example)
-    cat_counts['Color'] = ['#90CAF9'] + ['#D3D3D3'] * (len(cat_counts) - 1)
-    
-    chart = alt.Chart(cat_counts).mark_bar(
-        cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4
-    ).encode(
-        alt.X('Category:N', sort=alt.EncodingSortField(field='Days', order='descending'), title=None),
-        alt.Y('Days:Q', title='Number of Days'),
-        alt.Color('Color:N', scale=None, legend=None),
+    # Pie Chart with blue gradient (Dicoding color scheme)
+    chart = alt.Chart(cat_counts).mark_arc(innerRadius=50).encode(
+        theta=alt.Theta('Days:Q', stack=True),
+        color=alt.Color('Category:N', 
+            scale=alt.Scale(
+                domain=['Low (<2k)', 'Medium (2k-4k)', 'High (4k-6k)', 'Very High (>6k)'],
+                range=['#E3F2FD', '#90CAF9', '#42A5F5', '#1565C0']
+            ),
+            legend=alt.Legend(title='Category')
+        ),
         tooltip=['Category:N', 'Days:Q']
     ).properties(height=300, title='Days by Rental Volume')
     
