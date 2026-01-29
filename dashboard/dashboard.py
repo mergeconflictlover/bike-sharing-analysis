@@ -74,6 +74,11 @@ filtered_hour_df = hour_df[(hour_df['dteday'] >= pd.Timestamp(start_date)) &
 if selected_season != 'All':
     filtered_hour_df = filtered_hour_df[filtered_hour_df['season_name'] == selected_season]
 
+# Check if data is empty
+if filtered_df.empty:
+    st.warning("⚠️ Tidak ada data untuk rentang tanggal dan filter yang dipilih. Silakan ubah filter.")
+    st.stop()
+
 # Main content
 st.title("🚲 Bike Sharing Analysis Dashboard")
 st.markdown("Dashboard interaktif untuk menganalisis pola penyewaan sepeda berdasarkan kondisi cuaca dan waktu.")
@@ -177,13 +182,14 @@ with tab3:
         fig, ax = plt.subplots(figsize=(8, 5))
         ax.scatter(filtered_df['temp_actual'], filtered_df['cnt'], alpha=0.5, c='#72BCD4')
         
-        # Trend line
+        # Trend line (only if we have enough data)
         import numpy as np
-        z = np.polyfit(filtered_df['temp_actual'], filtered_df['cnt'], 1)
-        p = np.poly1d(z)
-        ax.plot(filtered_df['temp_actual'].sort_values(), 
-               p(filtered_df['temp_actual'].sort_values()), 
-               "r--", alpha=0.8, label='Trend Line')
+        if len(filtered_df) > 1:
+            z = np.polyfit(filtered_df['temp_actual'], filtered_df['cnt'], 1)
+            p = np.poly1d(z)
+            ax.plot(filtered_df['temp_actual'].sort_values(), 
+                   p(filtered_df['temp_actual'].sort_values()), 
+                   "r--", alpha=0.8, label='Trend Line')
         
         ax.set_title('Hubungan Suhu dengan Penyewaan', fontsize=14, fontweight='bold')
         ax.set_xlabel('Suhu (°C)')
