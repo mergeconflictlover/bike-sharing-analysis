@@ -14,136 +14,6 @@ st.set_page_config(
 # Get the directory where dashboard.py is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ==================== LIGHT THEME CSS ====================
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-    
-    /* Global */
-    html, body, [class*="css"] {
-        font-family: 'Space Grotesk', sans-serif;
-    }
-    
-    .stApp {
-        background-color: #ffffff;
-    }
-    
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #f8fafc;
-        border-right: 1px solid #e2e8f0;
-    }
-    
-    /* Headers */
-    h1, h2, h3, h4, h5, h6 {
-        color: #1e293b !important;
-        font-family: 'Space Grotesk', sans-serif !important;
-    }
-    
-    p, span, label {
-        color: #1e293b;
-    }
-    
-    /* Animated counter styles */
-    .counter-container {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    
-    .counter-label {
-        color: #64748b;
-        font-size: 0.85rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.5rem;
-    }
-    
-    .counter-value {
-        color: #1e293b;
-        font-size: 2.5rem;
-        font-weight: 700;
-        font-family: 'Space Grotesk', monospace;
-        line-height: 1.2;
-    }
-    
-    .counter-delta {
-        color: #615fff;
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin-top: 0.25rem;
-    }
-    
-    /* Footer */
-    .footer {
-        color: #64748b;
-        font-size: 0.8rem;
-        text-align: center;
-        padding: 2rem 0;
-        border-top: 1px solid #e2e8f0;
-        margin-top: 2rem;
-    }
-    
-    /* Hide default streamlit elements */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
-# ==================== ANIMATED COUNTER COMPONENT ====================
-def animated_counter(label, value, delta=None, prefix="", suffix="", icon=""):
-    """Create an animated counter with counting effect"""
-    
-    if isinstance(value, float):
-        formatted_value = f"{value:,.1f}"
-    else:
-        formatted_value = f"{value:,}"
-    
-    counter_id = f"counter_{label.replace(' ', '_').lower()}"
-    
-    html = f"""
-    <div class="counter-container">
-        <div class="counter-label">{icon} {label}</div>
-        <div class="counter-value" id="{counter_id}">{prefix}0{suffix}</div>
-        {f'<div class="counter-delta">{delta}</div>' if delta else ''}
-    </div>
-    
-    <script>
-        (function() {{
-            const counterElement = document.getElementById('{counter_id}');
-            const targetValue = {value};
-            const duration = 2000;
-            const frameDuration = 1000 / 60;
-            const totalFrames = Math.round(duration / frameDuration);
-            
-            let frame = 0;
-            const countTo = targetValue;
-            
-            const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
-            
-            const counter = setInterval(() => {{
-                frame++;
-                const progress = easeOutQuart(frame / totalFrames);
-                const currentCount = Math.round(countTo * progress);
-                
-                const formatted = currentCount.toLocaleString('en-US');
-                counterElement.textContent = '{prefix}' + formatted + '{suffix}';
-                
-                if (frame === totalFrames) {{
-                    clearInterval(counter);
-                    counterElement.textContent = '{prefix}{formatted_value}{suffix}';
-                }}
-            }}, frameDuration);
-        }})();
-    </script>
-    """
-    
-    return html
-
 # ==================== LOAD DATA ====================
 @st.cache_data
 def load_data():
@@ -250,7 +120,7 @@ with chart_cell:
     
     st.altair_chart(chart, use_container_width=True)
 
-# ==================== ANIMATED METRICS ====================
+# ==================== METRICS ====================
 ""
 
 total_rentals = int(filtered_df['cnt'].sum())
@@ -263,47 +133,35 @@ pct_registered = (total_registered / total_rentals * 100) if total_rentals > 0 e
 metric_cols = st.columns(4)
 
 with metric_cols[0]:
-    st.markdown(
-        animated_counter(
-            label="Total Rentals",
-            value=total_rentals,
-            delta=f"{len(filtered_df)} days",
-            icon="🚲"
-        ),
-        unsafe_allow_html=True
+    cell = st.container(border=True)
+    cell.metric(
+        ":material/pedal_bike: Total Rentals",
+        f"{total_rentals:,}",
+        f"{len(filtered_df)} days"
     )
 
 with metric_cols[1]:
-    st.markdown(
-        animated_counter(
-            label="Daily Average",
-            value=avg_rentals,
-            delta="per day",
-            icon="📊"
-        ),
-        unsafe_allow_html=True
+    cell = st.container(border=True)
+    cell.metric(
+        ":material/analytics: Daily Average",
+        f"{avg_rentals:,}",
+        "per day"
     )
 
 with metric_cols[2]:
-    st.markdown(
-        animated_counter(
-            label="Casual Users",
-            value=total_casual,
-            delta=f"{pct_casual:.1f}%",
-            icon="👤"
-        ),
-        unsafe_allow_html=True
+    cell = st.container(border=True)
+    cell.metric(
+        ":material/person: Casual Users",
+        f"{total_casual:,}",
+        f"{pct_casual:.1f}%"
     )
 
 with metric_cols[3]:
-    st.markdown(
-        animated_counter(
-            label="Registered Users",
-            value=total_registered,
-            delta=f"{pct_registered:.1f}%",
-            icon="✓"
-        ),
-        unsafe_allow_html=True
+    cell = st.container(border=True)
+    cell.metric(
+        ":material/verified: Registered Users",
+        f"{total_registered:,}",
+        f"{pct_registered:.1f}%"
     )
 
 ""
@@ -452,14 +310,14 @@ with time_cols[1]:
 
 # ==================== INSIGHTS ====================
 """
-## :material/insights: Key Insights
+## :material/lightbulb: Key Insights
 """
 
 insight_cols = st.columns(3)
 
 with insight_cols[0]:
     cell = st.container(border=True)
-    cell.markdown("##### 🕐 Peak Hours")
+    cell.markdown("##### :material/schedule: Peak Hours")
     
     hourly_avg = filtered_hour_df.groupby('hr')['cnt'].mean()
     top_hours = hourly_avg.nlargest(3)
@@ -469,7 +327,7 @@ with insight_cols[0]:
 
 with insight_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### ☀️ Best Conditions")
+    cell.markdown("##### :material/wb_sunny: Best Conditions")
     
     best_season = filtered_df.groupby('season_name')['cnt'].mean().idxmax()
     best_weather = filtered_df.groupby('weather_name')['cnt'].mean().idxmax()
@@ -481,7 +339,7 @@ with insight_cols[1]:
 
 with insight_cols[2]:
     cell = st.container(border=True)
-    cell.markdown("##### 👥 User Behavior")
+    cell.markdown("##### :material/group: User Behavior")
     
     weekend_casual = filtered_df[filtered_df['workingday'] == 0]['casual'].mean()
     weekday_casual = filtered_df[filtered_df['workingday'] == 1]['casual'].mean()
@@ -534,7 +392,7 @@ with seg_cols[0]:
 
 with seg_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### 📊 Category Stats")
+    cell.markdown("##### :material/bar_chart: Category Stats")
     
     cat_stats = filtered_df_cat.groupby('category').agg({
         'cnt': ['count', 'mean'],
@@ -557,7 +415,7 @@ conc_cols = st.columns(2)
 
 with conc_cols[0]:
     cell = st.container(border=True)
-    cell.markdown("##### 🌤️ Weather Impact")
+    cell.markdown("##### :material/cloud: Weather Impact")
     cell.markdown("""
     1. **Fall** has highest average rentals
     2. **Clear weather** increases rentals ~2x
@@ -567,7 +425,7 @@ with conc_cols[0]:
 
 with conc_cols[1]:
     cell = st.container(border=True)
-    cell.markdown("##### ⏰ Time Patterns")
+    cell.markdown("##### :material/schedule: Time Patterns")
     cell.markdown("""
     1. **Peak:** 8 AM & 5-6 PM (commuters)
     2. **Registered** = bimodal pattern
@@ -576,11 +434,12 @@ with conc_cols[1]:
     """)
 
 # ==================== FOOTER ====================
-st.markdown("---")
+st.divider()
 
-st.markdown("""
-<div class="footer">
-    <p>Data: Capital Bikeshare System, Washington D.C. (2011-2012)</p>
-    <p>Created by <strong>Muhammad Himbar Buana</strong> • Dicoding Indonesia</p>
-</div>
-""", unsafe_allow_html=True)
+footer_cols = st.columns([2, 1])
+
+with footer_cols[0]:
+    st.caption(":material/database: Data: Capital Bikeshare System, Washington D.C. (2011-2012)")
+
+with footer_cols[1]:
+    st.caption(":material/person: Created by **Muhammad Himbar Buana** • Dicoding Indonesia")
