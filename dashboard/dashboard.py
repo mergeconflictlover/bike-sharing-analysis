@@ -3,15 +3,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 from babel.numbers import format_currency
+import os
 
 # Set page config
 st.set_page_config(page_title="Bike Sharing Dashboard", page_icon="🚲", layout="wide")
 
+# Get the directory where dashboard.py is located
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load data
 @st.cache_data
 def load_data():
-    day_df = pd.read_csv("main_data.csv")
-    hour_df = pd.read_csv("hour_data.csv")
+    day_df = pd.read_csv(os.path.join(CURRENT_DIR, "main_data.csv"))
+    hour_df = pd.read_csv(os.path.join(CURRENT_DIR, "hour_data.csv"))
     
     day_df['dteday'] = pd.to_datetime(day_df['dteday'])
     hour_df['dteday'] = pd.to_datetime(hour_df['dteday'])
