@@ -356,60 +356,6 @@ with insight_cols[2]:
 ""
 ""
 
-# ==================== SEGMENTATION ====================
-"""
-## :material/donut_large: Volume Segmentation
-"""
-
-seg_cols = st.columns([2, 1])
-
-with seg_cols[0]:
-    cell = st.container(border=True)
-    
-    def categorize(cnt):
-        if cnt < 2000: return 'Low (<2k)'
-        elif cnt < 4000: return 'Medium (2k-4k)'
-        elif cnt < 6000: return 'High (4k-6k)'
-        else: return 'Very High (>6k)'
-    
-    filtered_df_cat = filtered_df.copy()
-    filtered_df_cat['category'] = filtered_df_cat['cnt'].apply(categorize)
-    
-    cat_counts = filtered_df_cat['category'].value_counts().reset_index()
-    cat_counts.columns = ['Category', 'Days']
-    
-    # Pie Chart with blue gradient (Dicoding color scheme)
-    chart = alt.Chart(cat_counts).mark_arc(innerRadius=50).encode(
-        theta=alt.Theta('Days:Q', stack=True),
-        color=alt.Color('Category:N', 
-            scale=alt.Scale(
-                domain=['Low (<2k)', 'Medium (2k-4k)', 'High (4k-6k)', 'Very High (>6k)'],
-                range=['#E3F2FD', '#90CAF9', '#42A5F5', '#1565C0']
-            ),
-            legend=alt.Legend(title='Category')
-        ),
-        tooltip=['Category:N', 'Days:Q']
-    ).properties(height=300, title='Days by Rental Volume')
-    
-    cell.altair_chart(chart, use_container_width=True)
-
-with seg_cols[1]:
-    cell = st.container(border=True)
-    cell.markdown("##### :material/bar_chart: Category Stats")
-    
-    cat_order_stats = ['Low (<2k)', 'Medium (2k-4k)', 'High (4k-6k)', 'Very High (>6k)']
-    cat_stats = filtered_df_cat.groupby('category').agg({
-        'cnt': ['count', 'mean'],
-        'temp_actual': 'mean'
-    }).round(1)
-    cat_stats.columns = ['Days', 'Avg', 'Temp']
-    cat_stats = cat_stats.reindex(cat_order_stats)
-    
-    cell.dataframe(cat_stats, use_container_width=True)
-
-""
-""
-
 # ==================== CONCLUSIONS ====================
 """
 ## :material/summarize: Conclusions
