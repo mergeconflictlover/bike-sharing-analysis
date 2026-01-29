@@ -14,218 +14,83 @@ st.set_page_config(
 # Get the directory where dashboard.py is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ==================== THEME TOGGLE ====================
-# Initialize theme in session state
-if 'theme' not in st.session_state:
-    st.session_state.theme = 'dark'
-
-# Theme configurations - exact colors from demo-stockpeers for dark mode
-THEMES = {
-    'dark': {
-        'background': '#0f172b',
-        'secondary_bg': '#1d293d',
-        'text': '#e2e8f0',
-        'text_secondary': '#94a3b8',
-        'primary': '#615fff',
-        'border': '#314158',
-        'card_bg': '#1d293d',
-        'success': '#10b981',
-        'warning': '#f59e0b',
-        'danger': '#ef4444',
-        'chart_colors': ['#615fff', '#ff6b6b', '#10b981', '#f59e0b', '#3b82f6'],
-    },
-    'light': {
-        'background': '#ffffff',
-        'secondary_bg': '#f8fafc',
-        'text': '#1e293b',
-        'text_secondary': '#64748b',
-        'primary': '#615fff',
-        'border': '#e2e8f0',
-        'card_bg': '#ffffff',
-        'success': '#10b981',
-        'warning': '#f59e0b',
-        'danger': '#ef4444',
-        'chart_colors': ['#615fff', '#ff6b6b', '#10b981', '#f59e0b', '#3b82f6'],
-    }
-}
-
-theme = THEMES[st.session_state.theme]
-
-# ==================== CUSTOM CSS ====================
-st.markdown(f"""
+# ==================== LIGHT THEME CSS ====================
+st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     
     /* Global */
-    html, body, [class*="css"] {{
+    html, body, [class*="css"] {
         font-family: 'Space Grotesk', sans-serif;
-    }}
+    }
     
-    .stApp {{
-        background-color: {theme['background']};
-    }}
+    .stApp {
+        background-color: #ffffff;
+    }
     
     /* Sidebar */
-    [data-testid="stSidebar"] {{
-        background-color: {theme['secondary_bg']};
-        border-right: 1px solid {theme['border']};
-    }}
+    [data-testid="stSidebar"] {
+        background-color: #f8fafc;
+        border-right: 1px solid #e2e8f0;
+    }
     
     /* Headers */
-    h1, h2, h3, h4, h5, h6 {{
-        color: {theme['text']} !important;
+    h1, h2, h3, h4, h5, h6 {
+        color: #1e293b !important;
         font-family: 'Space Grotesk', sans-serif !important;
-    }}
+    }
     
-    p, span, label {{
-        color: {theme['text']};
-    }}
-    
-    /* Metric cards */
-    [data-testid="stMetricValue"] {{
-        color: {theme['text']} !important;
-        font-family: 'Space Grotesk', sans-serif !important;
-    }}
-    
-    [data-testid="stMetricLabel"] {{
-        color: {theme['text_secondary']} !important;
-    }}
-    
-    [data-testid="stMetricDelta"] {{
-        color: {theme['text_secondary']} !important;
-    }}
-    
-    /* Container borders */
-    [data-testid="stVerticalBlock"] > div:has(> [data-testid="stVerticalBlockBorderWrapper"]) {{
-        background-color: {theme['card_bg']};
-        border: 1px solid {theme['border']};
-        border-radius: 12px;
-    }}
+    p, span, label {
+        color: #1e293b;
+    }
     
     /* Animated counter styles */
-    .counter-container {{
-        background: {theme['card_bg']};
-        border: 1px solid {theme['border']};
+    .counter-container {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
-    }}
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
     
-    .counter-label {{
-        color: {theme['text_secondary']};
+    .counter-label {
+        color: #64748b;
         font-size: 0.85rem;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 0.5rem;
-    }}
+    }
     
-    .counter-value {{
-        color: {theme['text']};
+    .counter-value {
+        color: #1e293b;
         font-size: 2.5rem;
         font-weight: 700;
         font-family: 'Space Grotesk', monospace;
         line-height: 1.2;
-    }}
+    }
     
-    .counter-delta {{
-        color: {theme['primary']};
+    .counter-delta {
+        color: #615fff;
         font-size: 0.9rem;
         font-weight: 500;
         margin-top: 0.25rem;
-    }}
-    
-    /* Theme toggle button */
-    .theme-toggle {{
-        position: fixed;
-        top: 0.75rem;
-        right: 1rem;
-        z-index: 1000;
-        background: {theme['card_bg']};
-        border: 1px solid {theme['border']};
-        border-radius: 50px;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        color: {theme['text']};
-        transition: all 0.3s ease;
-    }}
-    
-    .theme-toggle:hover {{
-        border-color: {theme['primary']};
-    }}
-    
-    /* Section headers */
-    .section-header {{
-        color: {theme['text']};
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 2rem 0 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }}
-    
-    /* Insight cards */
-    .insight-card {{
-        background: {theme['secondary_bg']};
-        border: 1px solid {theme['border']};
-        border-radius: 10px;
-        padding: 1rem;
-    }}
-    
-    .insight-card h5 {{
-        color: {theme['text']};
-        margin: 0 0 0.75rem 0;
-        font-size: 0.95rem;
-    }}
-    
-    .insight-card p {{
-        color: {theme['text_secondary']};
-        font-size: 0.9rem;
-        margin: 0.25rem 0;
-    }}
+    }
     
     /* Footer */
-    .footer {{
-        color: {theme['text_secondary']};
+    .footer {
+        color: #64748b;
         font-size: 0.8rem;
         text-align: center;
         padding: 2rem 0;
-        border-top: 1px solid {theme['border']};
+        border-top: 1px solid #e2e8f0;
         margin-top: 2rem;
-    }}
+    }
     
     /* Hide default streamlit elements */
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-    
-    /* Pills/Tabs styling */
-    .stTabs [data-baseweb="tab-list"] {{
-        gap: 8px;
-        background-color: transparent;
-    }}
-    
-    .stTabs [data-baseweb="tab"] {{
-        background-color: {theme['secondary_bg']};
-        border: 1px solid {theme['border']};
-        border-radius: 8px;
-        color: {theme['text']};
-    }}
-    
-    .stTabs [aria-selected="true"] {{
-        background-color: {theme['primary']};
-        border-color: {theme['primary']};
-    }}
-    
-    /* Dataframe */
-    .stDataFrame {{
-        border: 1px solid {theme['border']};
-        border-radius: 8px;
-    }}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -233,13 +98,11 @@ st.markdown(f"""
 def animated_counter(label, value, delta=None, prefix="", suffix="", icon=""):
     """Create an animated counter with counting effect"""
     
-    # Format value for display
     if isinstance(value, float):
         formatted_value = f"{value:,.1f}"
     else:
         formatted_value = f"{value:,}"
     
-    # Create unique ID for this counter
     counter_id = f"counter_{label.replace(' ', '_').lower()}"
     
     html = f"""
@@ -253,14 +116,13 @@ def animated_counter(label, value, delta=None, prefix="", suffix="", icon=""):
         (function() {{
             const counterElement = document.getElementById('{counter_id}');
             const targetValue = {value};
-            const duration = 2000; // 2 seconds
-            const frameDuration = 1000 / 60; // 60fps
+            const duration = 2000;
+            const frameDuration = 1000 / 60;
             const totalFrames = Math.round(duration / frameDuration);
             
             let frame = 0;
             const countTo = targetValue;
             
-            // Easing function for smooth animation
             const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
             
             const counter = setInterval(() => {{
@@ -268,7 +130,6 @@ def animated_counter(label, value, delta=None, prefix="", suffix="", icon=""):
                 const progress = easeOutQuart(frame / totalFrames);
                 const currentCount = Math.round(countTo * progress);
                 
-                // Format number with commas
                 const formatted = currentCount.toLocaleString('en-US');
                 counterElement.textContent = '{prefix}' + formatted + '{suffix}';
                 
@@ -296,24 +157,12 @@ def load_data():
 
 day_df, hour_df = load_data()
 
-# ==================== HEADER WITH THEME TOGGLE ====================
-header_cols = st.columns([6, 1])
+# ==================== HEADER ====================
+"""
+# :material/directions_bike: Bike Sharing Analytics
 
-with header_cols[0]:
-    st.markdown("""
-    # :material/directions_bike: Bike Sharing Analytics
-    
-    Analisis pola penyewaan sepeda berdasarkan kondisi cuaca dan waktu.
-    """)
-
-with header_cols[1]:
-    # Theme toggle button
-    theme_icon = "🌙" if st.session_state.theme == 'light' else "☀️"
-    theme_label = "Dark" if st.session_state.theme == 'light' else "Light"
-    
-    if st.button(f"{theme_icon} {theme_label}", key="theme_toggle", use_container_width=True):
-        st.session_state.theme = 'light' if st.session_state.theme == 'dark' else 'dark'
-        st.rerun()
+Analisis pola penyewaan sepeda berdasarkan kondisi cuaca dan waktu.
+"""
 
 ""  # Spacer
 
@@ -325,7 +174,6 @@ filter_cell = cols[0].container(border=True)
 with filter_cell:
     st.markdown("##### :material/filter_alt: Filters")
     
-    # Date range
     min_date = day_df['dteday'].min().date()
     max_date = day_df['dteday'].max().date()
     
@@ -342,15 +190,13 @@ with filter_cell:
         start_date = date_range[0]
         end_date = date_range[0]
     
-    ""  # Spacer
+    ""
     
-    # Season filter
     season_options = ['All', 'Spring', 'Summer', 'Fall', 'Winter']
     selected_season = st.pills("Season", options=season_options, default='All')
     
-    ""  # Spacer
+    ""
     
-    # Weather filter
     weather_options = ['All'] + list(day_df['weather_name'].unique())
     selected_weather = st.pills("Weather", options=weather_options, default='All')
 
@@ -373,7 +219,6 @@ if selected_season != 'All':
 if selected_weather != 'All':
     filtered_hour_df = filtered_hour_df[filtered_hour_df['weather_name'] == selected_weather]
 
-# Check if data is empty
 if filtered_df.empty:
     filter_cell.info("No data for selected filters", icon=":material/info:")
     st.stop()
@@ -398,24 +243,15 @@ with chart_cell:
         alt.Y('Rentals:Q', title='Daily Rentals', stack=True),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=[theme['primary'], theme['danger']]
+            range=['#615fff', '#ff6b6b']
         )),
         alt.Tooltip(['dteday:T', 'User Type:N', 'Rentals:Q'])
-    ).properties(height=350).configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_legend(
-        labelColor=theme['text'],
-        titleColor=theme['text']
-    )
+    ).properties(height=350)
     
     st.altair_chart(chart, use_container_width=True)
 
 # ==================== ANIMATED METRICS ====================
-""  # Spacer
+""
 
 total_rentals = int(filtered_df['cnt'].sum())
 avg_rentals = int(filtered_df['cnt'].mean())
@@ -474,7 +310,9 @@ with metric_cols[3]:
 ""
 
 # ==================== WEATHER ANALYSIS ====================
-st.markdown("## :material/cloud: Weather Impact Analysis")
+"""
+## :material/cloud: Weather Impact Analysis
+"""
 
 weather_cols = st.columns(3)
 
@@ -495,18 +333,10 @@ with weather_cols[0]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('Season:N', scale=alt.Scale(
             domain=season_order,
-            range=[theme['success'], theme['warning'], theme['danger'], theme['primary']]
+            range=['#10b981', '#f59e0b', '#ef4444', '#3b82f6']
         ), legend=None),
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
-    ).properties(height=280, title='Rentals by Season').configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_title(
-        color=theme['text']
-    )
+    ).properties(height=280, title='Rentals by Season')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -525,15 +355,7 @@ with weather_cols[1]:
         alt.X('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('Average Rentals:Q', scale=alt.Scale(scheme='blues'), legend=None),
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
-    ).properties(height=280, title='Rentals by Weather').configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_title(
-        color=theme['text']
-    )
+    ).properties(height=280, title='Rentals by Weather')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -553,19 +375,11 @@ with weather_cols[2]:
     )
     
     trend = scatter.transform_regression('temp_actual', 'cnt').mark_line(
-        color=theme['danger'], 
+        color='#ef4444', 
         strokeDash=[4, 4]
     )
     
-    chart = (scatter + trend).properties(height=280, title='Temperature vs Rentals').configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_title(
-        color=theme['text']
-    )
+    chart = (scatter + trend).properties(height=280, title='Temperature vs Rentals')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -573,7 +387,9 @@ with weather_cols[2]:
 ""
 
 # ==================== TIME ANALYSIS ====================
-st.markdown("## :material/schedule: Time Pattern Analysis")
+"""
+## :material/schedule: Time Pattern Analysis
+"""
 
 time_cols = st.columns(2)
 
@@ -596,21 +412,10 @@ with time_cols[0]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=[theme['primary'], theme['danger']]
+            range=['#615fff', '#ff6b6b']
         )),
         alt.Tooltip(['hr:O', 'User Type:N', 'Average Rentals:Q'])
-    ).properties(height=300, title='Hourly Rental Pattern').configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_title(
-        color=theme['text']
-    ).configure_legend(
-        labelColor=theme['text'],
-        titleColor=theme['text']
-    )
+    ).properties(height=300, title='Hourly Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -634,22 +439,11 @@ with time_cols[1]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=[theme['primary'], theme['danger']]
+            range=['#615fff', '#ff6b6b']
         )),
         alt.XOffset('User Type:N'),
         alt.Tooltip(['weekday_name:N', 'User Type:N', 'Average Rentals:Q'])
-    ).properties(height=300, title='Daily Rental Pattern').configure_view(
-        strokeWidth=0
-    ).configure_axis(
-        labelColor=theme['text_secondary'],
-        titleColor=theme['text'],
-        gridColor=theme['border']
-    ).configure_title(
-        color=theme['text']
-    ).configure_legend(
-        labelColor=theme['text'],
-        titleColor=theme['text']
-    )
+    ).properties(height=300, title='Daily Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -657,7 +451,9 @@ with time_cols[1]:
 ""
 
 # ==================== INSIGHTS ====================
-st.markdown("## :material/insights: Key Insights")
+"""
+## :material/insights: Key Insights
+"""
 
 insight_cols = st.columns(3)
 
@@ -700,7 +496,9 @@ with insight_cols[2]:
 ""
 
 # ==================== SEGMENTATION ====================
-st.markdown("## :material/donut_large: Volume Segmentation")
+"""
+## :material/donut_large: Volume Segmentation
+"""
 
 seg_cols = st.columns([2, 1])
 
@@ -727,17 +525,10 @@ with seg_cols[0]:
         alt.Theta('Days:Q'),
         alt.Color('Category:N', scale=alt.Scale(
             domain=cat_order,
-            range=[theme['danger'], theme['warning'], theme['success'], theme['primary']]
+            range=['#ef4444', '#f59e0b', '#10b981', '#615fff']
         ), sort=cat_order),
         alt.Tooltip(['Category:N', 'Days:Q'])
-    ).properties(height=300, title='Days by Rental Volume').configure_view(
-        strokeWidth=0
-    ).configure_title(
-        color=theme['text']
-    ).configure_legend(
-        labelColor=theme['text'],
-        titleColor=theme['text']
-    )
+    ).properties(height=300, title='Days by Rental Volume')
     
     cell.altair_chart(chart, use_container_width=True)
 
@@ -758,7 +549,9 @@ with seg_cols[1]:
 ""
 
 # ==================== CONCLUSIONS ====================
-st.markdown("## :material/summarize: Conclusions")
+"""
+## :material/summarize: Conclusions
+"""
 
 conc_cols = st.columns(2)
 
@@ -785,7 +578,7 @@ with conc_cols[1]:
 # ==================== FOOTER ====================
 st.markdown("---")
 
-st.markdown(f"""
+st.markdown("""
 <div class="footer">
     <p>Data: Capital Bikeshare System, Washington D.C. (2011-2012)</p>
     <p>Created by <strong>Muhammad Himbar Buana</strong> • Dicoding Indonesia</p>
