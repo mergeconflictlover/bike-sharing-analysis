@@ -376,12 +376,13 @@ with seg_cols[0]:
     cat_counts['Category'] = pd.Categorical(cat_counts['Category'], categories=cat_order, ordered=True)
     cat_counts = cat_counts.sort_values('Category')
     
-    chart = alt.Chart(cat_counts).mark_arc(innerRadius=70).encode(
-        alt.Theta('Days:Q'),
-        alt.Color('Category:N', scale=alt.Scale(
-            domain=cat_order,
-            range=['#B3E5FC', '#81D4FA', '#4FC3F7', '#29B6F6']
-        ), sort=cat_order),
+    chart = alt.Chart(cat_counts).mark_bar(
+        cornerRadiusTopLeft=4,
+        cornerRadiusTopRight=4,
+        color='#90CAF9'
+    ).encode(
+        alt.X('Category:N', sort=cat_order, title=None),
+        alt.Y('Days:Q', title='Number of Days'),
         tooltip=['Category:N', 'Days:Q']
     ).properties(height=300, title='Days by Rental Volume')
     
