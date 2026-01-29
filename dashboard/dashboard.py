@@ -11,37 +11,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# Configure Altair for sharper rendering
-alt.renderers.set_embed_options(
-    scaleFactor=2  # Higher resolution for crisp charts
-)
-
-# Custom theme for sharper text
-def custom_theme():
-    return {
-        'config': {
-            'view': {'continuousWidth': 400, 'continuousHeight': 300},
-            'axis': {
-                'labelFontSize': 12,
-                'titleFontSize': 13,
-                'titleFontWeight': 'bold',
-                'labelFont': 'sans-serif',
-                'titleFont': 'sans-serif',
-            },
-            'legend': {
-                'labelFontSize': 11,
-                'titleFontSize': 12,
-            },
-            'title': {
-                'fontSize': 14,
-                'fontWeight': 'bold',
-            }
-        }
-    }
-
-alt.themes.register('custom', custom_theme)
-alt.themes.enable('custom')
-
 # Get the directory where dashboard.py is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -149,7 +118,7 @@ with chart_cell:
         tooltip=['dteday:T', 'User Type:N', 'Rentals:Q']
     ).properties(height=350)
     
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True, theme=None)
 
 # ==================== METRICS ====================
 ""
@@ -227,7 +196,7 @@ with weather_cols[0]:
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Season')
     
-    cell.altair_chart(chart, use_container_width=True)
+    cell.altair_chart(chart, use_container_width=True, theme=None)
 
 with weather_cols[1]:
     cell = st.container(border=True)
@@ -249,7 +218,7 @@ with weather_cols[1]:
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Weather')
     
-    cell.altair_chart(chart, use_container_width=True)
+    cell.altair_chart(chart, use_container_width=True, theme=None)
 
 with weather_cols[2]:
     cell = st.container(border=True)
@@ -273,7 +242,7 @@ with weather_cols[2]:
     
     chart = (scatter + trend).properties(height=280, title='Temperature vs Rentals')
     
-    cell.altair_chart(chart, use_container_width=True)
+    cell.altair_chart(chart, use_container_width=True, theme=None)
 
 ""
 ""
@@ -309,7 +278,7 @@ with time_cols[0]:
         tooltip=['hr:O', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Hourly Rental Pattern')
     
-    cell.altair_chart(chart, use_container_width=True)
+    cell.altair_chart(chart, use_container_width=True, theme=None)
 
 with time_cols[1]:
     cell = st.container(border=True)
@@ -337,7 +306,7 @@ with time_cols[1]:
         tooltip=['weekday_name:N', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Daily Rental Pattern')
     
-    cell.altair_chart(chart, use_container_width=True)
+    cell.altair_chart(chart, use_container_width=True, theme=None)
 
 ""
 ""
