@@ -113,9 +113,9 @@ with chart_cell:
         alt.Y('Rentals:Q', title='Daily Rentals', stack=True),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=['#90CAF9', '#D3D3D3']
         )),
-        alt.Tooltip(['dteday:T', 'User Type:N', 'Rentals:Q'])
+        alt.Tooltip=['dteday:T', 'User Type:N', 'Rentals:Q']
     ).properties(height=350)
     
     st.altair_chart(chart, use_container_width=True)
@@ -183,17 +183,13 @@ with weather_cols[0]:
     season_data['Season'] = pd.Categorical(season_data['Season'], categories=season_order, ordered=True)
     season_data = season_data.sort_values('Season')
     
-    # Highlight highest value with different color
-    max_season = season_data.loc[season_data['Average Rentals'].idxmax(), 'Season']
-    season_data['Color'] = season_data['Season'].apply(lambda x: '#ef4444' if x == max_season else '#94a3b8')
-    
     chart = alt.Chart(season_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4
+        cornerRadiusTopRight=4,
+        color='#90CAF9'
     ).encode(
         alt.X('Season:N', sort=season_order, title=None),
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
-        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Season')
     
@@ -206,17 +202,13 @@ with weather_cols[1]:
     weather_data.columns = ['Weather', 'Average Rentals']
     weather_data = weather_data.sort_values('Average Rentals', ascending=False)
     
-    # Highlight highest value with different color
-    max_weather = weather_data.loc[weather_data['Average Rentals'].idxmax(), 'Weather']
-    weather_data['Color'] = weather_data['Weather'].apply(lambda x: '#3b82f6' if x == max_weather else '#94a3b8')
-    
     chart = alt.Chart(weather_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4
+        cornerRadiusTopRight=4,
+        color='#90CAF9'
     ).encode(
         alt.Y('Weather:N', sort='-x', title=None),
         alt.X('Average Rentals:Q', title='Avg Rentals'),
-        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Weather')
     
@@ -229,16 +221,16 @@ with weather_cols[2]:
     
     scatter = alt.Chart(temp_data).mark_circle(
         opacity=0.5,
-        size=40
+        size=40,
+        color='#90CAF9'
     ).encode(
         alt.X('temp_actual:Q', title='Temperature (°C)'),
         alt.Y('cnt:Q', title='Rentals'),
-        alt.Color('cnt:Q', scale=alt.Scale(scheme='viridis'), legend=None),
-        alt.Tooltip(['temp_actual:Q', 'cnt:Q'])
+        alt.Tooltip=['temp_actual:Q', 'cnt:Q']
     )
     
     trend = scatter.transform_regression('temp_actual', 'cnt').mark_line(
-        color='#ef4444', 
+        color='#1565C0', 
         strokeDash=[4, 4]
     )
     
@@ -275,9 +267,9 @@ with time_cols[0]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=['#90CAF9', '#D3D3D3']
         )),
-        alt.Tooltip(['hr:O', 'User Type:N', 'Average Rentals:Q'])
+        alt.Tooltip=['hr:O', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Hourly Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
@@ -302,10 +294,10 @@ with time_cols[1]:
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
         alt.Color('User Type:N', scale=alt.Scale(
             domain=['registered', 'casual'],
-            range=['#615fff', '#ff6b6b']
+            range=['#90CAF9', '#D3D3D3']
         )),
         alt.XOffset('User Type:N'),
-        alt.Tooltip(['weekday_name:N', 'User Type:N', 'Average Rentals:Q'])
+        alt.Tooltip=['weekday_name:N', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Daily Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
@@ -388,9 +380,9 @@ with seg_cols[0]:
         alt.Theta('Days:Q'),
         alt.Color('Category:N', scale=alt.Scale(
             domain=cat_order,
-            range=['#ef4444', '#f59e0b', '#10b981', '#615fff']
+            range=['#B3E5FC', '#81D4FA', '#4FC3F7', '#29B6F6']
         ), sort=cat_order),
-        alt.Tooltip(['Category:N', 'Days:Q'])
+        alt.Tooltip=['Category:N', 'Days:Q']
     ).properties(height=300, title='Days by Rental Volume')
     
     cell.altair_chart(chart, use_container_width=True)
