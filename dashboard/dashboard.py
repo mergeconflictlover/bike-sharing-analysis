@@ -11,6 +11,37 @@ st.set_page_config(
     layout="wide",
 )
 
+# Configure Altair for sharper rendering
+alt.renderers.set_embed_options(
+    scaleFactor=2  # Higher resolution for crisp charts
+)
+
+# Custom theme for sharper text
+def custom_theme():
+    return {
+        'config': {
+            'view': {'continuousWidth': 400, 'continuousHeight': 300},
+            'axis': {
+                'labelFontSize': 12,
+                'titleFontSize': 13,
+                'titleFontWeight': 'bold',
+                'labelFont': 'sans-serif',
+                'titleFont': 'sans-serif',
+            },
+            'legend': {
+                'labelFontSize': 11,
+                'titleFontSize': 12,
+            },
+            'title': {
+                'fontSize': 14,
+                'fontWeight': 'bold',
+            }
+        }
+    }
+
+alt.themes.register('custom', custom_theme)
+alt.themes.enable('custom')
+
 # Get the directory where dashboard.py is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
