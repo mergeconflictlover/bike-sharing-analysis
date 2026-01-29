@@ -181,15 +181,18 @@ with weather_cols[0]:
     season_data.columns = ['Season', 'Average Rentals']
     season_order = ['Spring', 'Summer', 'Fall', 'Winter']
     season_data['Season'] = pd.Categorical(season_data['Season'], categories=season_order, ordered=True)
-    season_data = season_data.sort_values('Season')
+    season_data = season_data.sort_values('Average Rentals', ascending=False).reset_index(drop=True)
+    
+    # Highlight: first is blue, rest is gray (like Dicoding example)
+    season_data['Color'] = ['#90CAF9'] + ['#D3D3D3'] * (len(season_data) - 1)
     
     chart = alt.Chart(season_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
-        color='#90CAF9'
+        cornerRadiusTopRight=4
     ).encode(
-        alt.X('Season:N', sort=season_order, title=None),
+        alt.X('Season:N', sort=alt.EncodingSortField(field='Average Rentals', order='descending'), title=None),
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
+        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Season')
     
@@ -200,15 +203,18 @@ with weather_cols[1]:
     
     weather_data = filtered_df.groupby('weather_name')['cnt'].mean().reset_index()
     weather_data.columns = ['Weather', 'Average Rentals']
-    weather_data = weather_data.sort_values('Average Rentals', ascending=False)
+    weather_data = weather_data.sort_values('Average Rentals', ascending=False).reset_index(drop=True)
+    
+    # Highlight: first is blue, rest is gray (like Dicoding example)
+    weather_data['Color'] = ['#90CAF9'] + ['#D3D3D3'] * (len(weather_data) - 1)
     
     chart = alt.Chart(weather_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
-        color='#90CAF9'
+        cornerRadiusTopRight=4
     ).encode(
-        alt.Y('Weather:N', sort='-x', title=None),
+        alt.Y('Weather:N', sort=alt.EncodingSortField(field='Average Rentals', order='descending'), title=None),
         alt.X('Average Rentals:Q', title='Avg Rentals'),
+        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Weather')
     
@@ -371,18 +377,18 @@ with seg_cols[0]:
     
     cat_counts = filtered_df_cat['category'].value_counts().reset_index()
     cat_counts.columns = ['Category', 'Days']
+    cat_counts = cat_counts.sort_values('Days', ascending=False).reset_index(drop=True)
     
-    cat_order = ['Low (<2k)', 'Medium (2k-4k)', 'High (4k-6k)', 'Very High (>6k)']
-    cat_counts['Category'] = pd.Categorical(cat_counts['Category'], categories=cat_order, ordered=True)
-    cat_counts = cat_counts.sort_values('Category')
+    # Highlight: first is blue, rest is gray (like Dicoding example)
+    cat_counts['Color'] = ['#90CAF9'] + ['#D3D3D3'] * (len(cat_counts) - 1)
     
     chart = alt.Chart(cat_counts).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
-        color='#90CAF9'
+        cornerRadiusTopRight=4
     ).encode(
-        alt.X('Category:N', sort=cat_order, title=None),
+        alt.X('Category:N', sort=alt.EncodingSortField(field='Days', order='descending'), title=None),
         alt.Y('Days:Q', title='Number of Days'),
+        alt.Color('Color:N', scale=None, legend=None),
         tooltip=['Category:N', 'Days:Q']
     ).properties(height=300, title='Days by Rental Volume')
     
