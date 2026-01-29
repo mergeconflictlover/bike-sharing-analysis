@@ -1,39 +1,50 @@
-# Proyek Analisis Data: Bike Sharing Dataset
+# 🚲 Bike Sharing Analytics Dashboard
 
-## Deskripsi Proyek
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 
-Proyek ini merupakan analisis data penyewaan sepeda dari sistem Capital Bikeshare di Washington D.C. periode 2011-2012. Analisis ini bertujuan untuk menjawab dua pertanyaan bisnis utama:
+Dashboard interaktif untuk menganalisis pola penyewaan sepeda dari sistem Capital Bikeshare di Washington D.C. (2011-2012).
+
+## 🌐 Demo
+
+**[👉 Live Dashboard](https://bike-sharing-analysis-mkrdxiguuwuixzmnlu5hza.streamlit.app)**
+
+## 📊 Pertanyaan Bisnis
 
 1. **Bagaimana pengaruh kondisi cuaca (musim, suhu, kelembaban) terhadap jumlah penyewaan sepeda?**
 2. **Pada jam dan hari apa penyewaan sepeda mencapai puncaknya, dan bagaimana perbedaan pola antara pengguna casual dan registered?**
 
-## Struktur Direktori
+## 📁 Struktur Direktori
 
 ```
-submission/
 ├── dashboard/
 │   ├── dashboard.py        # Dashboard Streamlit
-│   ├── main_data.csv       # Data harian yang sudah dibersihkan
-│   └── hour_data.csv       # Data per jam yang sudah dibersihkan
+│   ├── main_data.csv       # Data harian (cleaned)
+│   └── hour_data.csv       # Data per jam (cleaned)
 ├── data/
-│   ├── day.csv             # Data mentah harian
-│   └── hour.csv            # Data mentah per jam
+│   ├── day.csv             # Raw data harian
+│   └── hour.csv            # Raw data per jam
 ├── notebook.ipynb          # Notebook analisis data
-├── README.md               # Dokumentasi proyek
-├── requirements.txt        # Daftar library yang dibutuhkan
-└── url.txt                 # Link dashboard (jika di-deploy)
+├── README.md
+├── requirements.txt
+└── url.txt
 ```
 
-## Instalasi
+## ⚙️ Setup & Installation
 
-### 1. Clone Repository / Download Project
+### 1. Clone Repository
 
-### 2. Buat Virtual Environment (Opsional tapi Disarankan)
+```bash
+git clone https://github.com/mergeconflictlover/bike-sharing-analysis.git
+cd bike-sharing-analysis
+```
+
+### 2. Buat Virtual Environment
 
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# atau
 venv\Scripts\activate     # Windows
 ```
 
@@ -43,66 +54,54 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-## Menjalankan Notebook
+## 🚀 Menjalankan Dashboard
 
-1. Pastikan Jupyter Notebook sudah terinstall
-2. Buka terminal dan navigasi ke folder `submission`
-3. Jalankan perintah:
+```bash
+cd dashboard
+streamlit run dashboard.py
+```
+
+Dashboard akan terbuka di `http://localhost:8501`
+
+## 📓 Menjalankan Notebook
 
 ```bash
 jupyter notebook notebook.ipynb
 ```
 
-4. Jalankan semua cell dari atas ke bawah untuk melihat analisis lengkap
+## ✨ Fitur Dashboard
 
-## Menjalankan Dashboard Streamlit
+| Fitur | Deskripsi |
+|-------|-----------|
+| 🎛️ **Filter Interaktif** | Rentang tanggal, musim, kondisi cuaca |
+| 📈 **Metrik Utama** | Total penyewaan, rata-rata harian, perbandingan user |
+| 🌤️ **Analisis Cuaca** | Pengaruh musim, cuaca, korelasi suhu |
+| ⏰ **Analisis Waktu** | Pola per jam, per hari, trend bulanan |
+| 📊 **Clustering** | Kategorisasi hari berdasarkan tingkat penyewaan |
 
-1. Pastikan sudah menjalankan notebook terlebih dahulu (untuk generate `main_data.csv` dan `hour_data.csv`)
-2. Navigasi ke folder dashboard:
+## 📌 Hasil Analisis
 
-```bash
-cd submission/dashboard
-```
+### Pengaruh Cuaca
+- 🍂 Musim **Fall (Gugur)** → penyewaan tertinggi
+- ☀️ Cuaca **cerah** → 2x lipat dibanding cuaca buruk
+- 🌡️ **Suhu** berkorelasi positif kuat (r ≈ 0.63)
 
-3. Jalankan Streamlit:
+### Pola Waktu
+- ⏰ **Jam puncak**: 08:00 & 17:00-18:00 (commuting hours)
+- 👔 **Registered**: pola commuter (hari kerja)
+- 🎉 **Casual**: meningkat 2x di weekend
 
-```bash
-streamlit run dashboard.py
-```
+## 🛠️ Tech Stack
 
-4. Dashboard akan terbuka di browser pada alamat `http://localhost:8501`
+- **Python** - Data processing & analysis
+- **Pandas & NumPy** - Data manipulation
+- **Matplotlib & Seaborn** - Visualization (notebook)
+- **Altair** - Interactive charts (dashboard)
+- **Streamlit** - Web dashboard framework
 
-## Fitur Dashboard
-
-- **Filter Interaktif**: Pilih rentang tanggal dan musim
-- **Metrik Utama**: Total penyewaan, rata-rata harian, casual vs registered
-- **Analisis Cuaca**: Visualisasi pengaruh musim, kondisi cuaca, dan korelasi suhu
-- **Analisis Waktu**: Pola penyewaan per jam, per hari, dan trend bulanan
-- **Clustering**: Kategorisasi hari berdasarkan tingkat penyewaan
-
-## Dataset
-
-Dataset yang digunakan adalah **Bike Sharing Dataset** dari UCI Machine Learning Repository. Dataset ini berisi informasi harian dan per jam tentang penyewaan sepeda, termasuk:
-
-- Informasi waktu (tanggal, jam, hari, bulan, tahun)
-- Kondisi cuaca (musim, suhu, kelembaban, kecepatan angin)
-- Tipe hari (hari kerja, libur, weekend)
-- Jumlah penyewaan (casual, registered, total)
-
-## Hasil Analisis
-
-### Kesimpulan Pertanyaan 1
-- Musim **Fall (Gugur)** memiliki rata-rata penyewaan tertinggi
-- Cuaca **cerah** meningkatkan penyewaan hingga 2x lipat dibanding cuaca buruk
-- **Suhu** berkorelasi positif kuat dengan penyewaan (r ≈ 0.63)
-
-### Kesimpulan Pertanyaan 2
-- **Jam puncak**: 08:00 pagi dan 17:00-18:00 sore
-- Pengguna **registered** menunjukkan pola commuter (berangkat-pulang kerja)
-- Pengguna **casual** meningkat 2x lipat di weekend
-
-## Author
+## 👨‍💻 Author
 
 **Muhammad Himbar Buana**
-- Email: [email Anda]
-- ID Dicoding: [ID Dicoding Anda]
+
+[![Email](https://img.shields.io/badge/Email-mhimbarbuana@gmail.com-D14836?style=flat&logo=gmail&logoColor=white)](mailto:mhimbarbuana@gmail.com)
+[![Dicoding](https://img.shields.io/badge/Dicoding-himbarbuana-2C3E50?style=flat)](https://www.dicoding.com/users/himbarbuana)
