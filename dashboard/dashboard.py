@@ -115,7 +115,7 @@ with chart_cell:
             domain=['registered', 'casual'],
             range=['#90CAF9', '#D3D3D3']
         )),
-        alt.Tooltip=['dteday:T', 'User Type:N', 'Rentals:Q']
+        tooltip=['dteday:T', 'User Type:N', 'Rentals:Q']
     ).properties(height=350)
     
     st.altair_chart(chart, use_container_width=True)
@@ -226,7 +226,7 @@ with weather_cols[2]:
     ).encode(
         alt.X('temp_actual:Q', title='Temperature (°C)'),
         alt.Y('cnt:Q', title='Rentals'),
-        alt.Tooltip=['temp_actual:Q', 'cnt:Q']
+        tooltip=['temp_actual:Q', 'cnt:Q']
     )
     
     trend = scatter.transform_regression('temp_actual', 'cnt').mark_line(
@@ -269,7 +269,7 @@ with time_cols[0]:
             domain=['registered', 'casual'],
             range=['#90CAF9', '#D3D3D3']
         )),
-        alt.Tooltip=['hr:O', 'User Type:N', 'Average Rentals:Q']
+        tooltip=['hr:O', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Hourly Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
@@ -297,7 +297,7 @@ with time_cols[1]:
             range=['#90CAF9', '#D3D3D3']
         )),
         alt.XOffset('User Type:N'),
-        alt.Tooltip=['weekday_name:N', 'User Type:N', 'Average Rentals:Q']
+        tooltip=['weekday_name:N', 'User Type:N', 'Average Rentals:Q']
     ).properties(height=300, title='Daily Rental Pattern')
     
     cell.altair_chart(chart, use_container_width=True)
@@ -382,7 +382,7 @@ with seg_cols[0]:
             domain=cat_order,
             range=['#B3E5FC', '#81D4FA', '#4FC3F7', '#29B6F6']
         ), sort=cat_order),
-        alt.Tooltip=['Category:N', 'Days:Q']
+        tooltip=['Category:N', 'Days:Q']
     ).properties(height=300, title='Days by Rental Volume')
     
     cell.altair_chart(chart, use_container_width=True)
