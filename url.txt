@@ -1,0 +1,7 @@
+# URL Dashboard Streamlit
+
+URL akan ditambahkan setelah dashboard di-deploy ke Streamlit Cloud.
+
+Untuk menjalankan dashboard secara lokal:
+1. cd submission/dashboard
+2. streamlit run dashboard.py
