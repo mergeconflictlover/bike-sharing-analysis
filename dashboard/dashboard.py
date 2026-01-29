@@ -31,15 +31,22 @@ with st.sidebar:
     st.markdown("---")
     
     # Date filter
-    min_date = day_df['dteday'].min()
-    max_date = day_df['dteday'].max()
+    min_date = day_df['dteday'].min().date()
+    max_date = day_df['dteday'].max().date()
     
-    start_date, end_date = st.date_input(
+    date_range = st.date_input(
         "Pilih Rentang Tanggal",
-        [min_date, max_date],
+        value=[min_date, max_date],
         min_value=min_date,
         max_value=max_date
     )
+    
+    # Handle single date selection
+    if len(date_range) == 2:
+        start_date, end_date = date_range
+    else:
+        start_date = date_range[0]
+        end_date = date_range[0]
     
     st.markdown("---")
     
