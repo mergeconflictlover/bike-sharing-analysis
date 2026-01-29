@@ -77,7 +77,7 @@ jupyter notebook notebook.ipynb
 | 📈 **Metrik Utama** | Total penyewaan, rata-rata harian, perbandingan user |
 | 🌤️ **Analisis Cuaca** | Pengaruh musim, cuaca, korelasi suhu |
 | ⏰ **Analisis Waktu** | Pola per jam, per hari, trend bulanan |
-| 📊 **Clustering** | Kategorisasi hari berdasarkan tingkat penyewaan |
+| 💡 **Key Insights** | Ringkasan temuan utama dari analisis |
 
 ## 📌 Hasil Analisis
 
@@ -96,6 +96,7 @@ jupyter notebook notebook.ipynb
 - **Python** - Data processing & analysis
 - **Pandas & NumPy** - Data manipulation
 - **Matplotlib & Seaborn** - Visualization (notebook)
+- **Scikit-learn** - Clustering analysis
 - **Altair** - Interactive charts (dashboard)
 - **Streamlit** - Web dashboard framework
 
