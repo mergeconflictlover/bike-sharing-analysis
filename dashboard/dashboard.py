@@ -183,16 +183,17 @@ with weather_cols[0]:
     season_data['Season'] = pd.Categorical(season_data['Season'], categories=season_order, ordered=True)
     season_data = season_data.sort_values('Season')
     
+    # Highlight highest value with different color
+    max_season = season_data.loc[season_data['Average Rentals'].idxmax(), 'Season']
+    season_data['Color'] = season_data['Season'].apply(lambda x: '#ef4444' if x == max_season else '#94a3b8')
+    
     chart = alt.Chart(season_data).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4
     ).encode(
         alt.X('Season:N', sort=season_order, title=None),
         alt.Y('Average Rentals:Q', title='Avg Rentals'),
-        alt.Color('Season:N', scale=alt.Scale(
-            domain=season_order,
-            range=['#10b981', '#f59e0b', '#ef4444', '#3b82f6']
-        ), legend=None),
+        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Season:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Season')
     
@@ -203,7 +204,11 @@ with weather_cols[1]:
     
     weather_data = filtered_df.groupby('weather_name')['cnt'].mean().reset_index()
     weather_data.columns = ['Weather', 'Average Rentals']
-    weather_data = weather_data.sort_values('Average Rentals', ascending=True)
+    weather_data = weather_data.sort_values('Average Rentals', ascending=False)
+    
+    # Highlight highest value with different color
+    max_weather = weather_data.loc[weather_data['Average Rentals'].idxmax(), 'Weather']
+    weather_data['Color'] = weather_data['Weather'].apply(lambda x: '#3b82f6' if x == max_weather else '#94a3b8')
     
     chart = alt.Chart(weather_data).mark_bar(
         cornerRadiusTopLeft=4,
@@ -211,7 +216,7 @@ with weather_cols[1]:
     ).encode(
         alt.Y('Weather:N', sort='-x', title=None),
         alt.X('Average Rentals:Q', title='Avg Rentals'),
-        alt.Color('Average Rentals:Q', scale=alt.Scale(scheme='blues'), legend=None),
+        alt.Color('Color:N', scale=None, legend=None),
         alt.Tooltip(['Weather:N', 'Average Rentals:Q'])
     ).properties(height=280, title='Rentals by Weather')
     

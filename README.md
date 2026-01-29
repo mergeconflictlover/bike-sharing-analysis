@@ -12,8 +12,8 @@ Dashboard interaktif untuk menganalisis pola penyewaan sepeda dari sistem Capita
 
 ## 📊 Pertanyaan Bisnis
 
-1. **Bagaimana pengaruh kondisi cuaca (musim, suhu, kelembaban) terhadap jumlah penyewaan sepeda?**
-2. **Pada jam dan hari apa penyewaan sepeda mencapai puncaknya, dan bagaimana perbedaan pola antara pengguna casual dan registered?**
+1. **Bagaimana pengaruh kondisi cuaca (musim, suhu, kelembaban) terhadap jumlah penyewaan sepeda di Washington D.C. selama periode 2011-2012, dan kondisi cuaca mana yang menghasilkan penyewaan tertinggi?**
+2. **Pada jam dan hari apa penyewaan sepeda mencapai puncaknya selama periode 2011-2012, dan bagaimana perbedaan pola penggunaan antara pengguna casual dan registered?**
 
 ## 📁 Struktur Direktori
 
